@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Feature;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class FeatureController extends Controller
 {
@@ -12,7 +14,12 @@ class FeatureController extends Controller
      */
     public function index()
     {
-        //
+        $currentUser=Auth::id();
+        $data=Feature::latest()->paginate();
+
+        return Inertia::render('Feature/index',[
+            'features' =>$data
+        ]);
     }
 
     /**
