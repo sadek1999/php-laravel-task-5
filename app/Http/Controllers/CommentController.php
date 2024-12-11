@@ -3,63 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use App\Models\Feature;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+       public function store(Request $request,Feature $feature)
     {
-        //
-    }
+        $validateComment=$request->validate([
+            'comment'=>'string|required',
+        ]);
+        $validateComment['user_id']=Auth::id();
+        $validateComment['feature_id']=$feature->id;
+         Comment::updateOrCreate($validateComment);
+         return back();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Comment $comment)
+    public function destroy(Feature $feature)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Comment $comment)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Comment $comment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Comment $comment)
-    {
-        //
+        $feature->comment()->where('user_id',Auth::id())->delete();
+        return back();
     }
 }

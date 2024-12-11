@@ -2,64 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Feature;
 use App\Models\Upvote;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UpvoteController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+       public function store(Request $request ,Feature $feature)
     {
-        //
-    }
+        $validateUpvote=$request->validate([
+            'upvote'=>'boolean|required'
+        ]);
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+        $validateUpvote['user_id']=Auth::id();
+        $validateUpvote['feature_id']=$feature->id;
+        Upvote::updateOrCreate($validateUpvote);
+        return back();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Upvote $upvote)
+    public function destroy(Feature $feature)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Upvote $upvote)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Upvote $upvote)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Upvote $upvote)
-    {
-        //
+       $feature->upvote()->where('user_id',Auth::id())->delete();
+       return back();
     }
 }
